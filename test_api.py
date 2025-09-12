@@ -42,7 +42,52 @@ def test_get_imoveis(mock_connect_db, client):
     expected_response = {
         "imoveis": [
             {'id':1, 'logradouro':'Nicole Common', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'casa em condominio', 'valor':488423.52, 'data_aquisicao':'2017-07-29'},
-        {'id':2, 'logradouro':'Price Prairie', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'apartamento', 'valor':488423.52, 'data_aquisicao':'2017-07-30'}
+            {'id':2, 'logradouro':'Price Prairie', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'apartamento', 'valor':488423.52, 'data_aquisicao':'2017-07-30'}
         ]
+    }
+    assert response.get_json() == expected_response
+
+@patch("api.connect_db")
+def test_get_id(mock_connect_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+    mock_cursor.fetchall.return_value = [
+        (1, 'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', 85184, 'casa em condominio', 488423.52, '2017-07-29'),
+        (2,'Price Prairie', 'Travessa','Lake Danielle', 'Judymouth', 85184, 'apartamento', 488423.52, '2017-07-30')
+    ]
+    mock_connect_db.return_value = mock_conn
+    id=1
+    response = client.get(f"imoveis/{id}")
+    assert response.status_code == 200
+    expected_response = {[
+        {'id':1, 'logradouro':'Nicole Common', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'casa em condominio', 'valor':488423.52, 'data_aquisicao':'2017-07-29'},
+        ]
+    }
+    assert response.get_json() == expected_response
+
+@patch("api.connect_db")
+def test_novo_imovel(mock_connect_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+    mock_connect_db.return_value = mock_conn
+    
+    imovel = {
+        'id':2,
+        'logradouro':'teste',
+        'tipo_logradouro':'teste_log',
+        'bairro':'pirituba',
+        'cidade':'sao paulo',
+        'cep':00000,
+        'tipo':'casa',
+        'valor':10000,
+        'data_aquisicao':'2025-09-12',   
+    }
+    mock_cursor.fetchone.return_value = tuple(imovel.values())
+    response = client.post("/criar")
+    assert response.status_code == 201
+    expected_response = {
+        "imoveis": [imovel]
     }
     assert response.get_json() == expected_response
