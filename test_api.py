@@ -28,10 +28,7 @@ def test_get_imoveis(mock_connect_db, client):
     
     # Substituímos a função `connect_db` para retornar nosso Mock em vez de uma conexão real
     mock_connect_db.return_value = mock_conn
-    with patch("requests.get") as mock_get:
-        # Definimos um comportamento falso para o mock
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = mock_cursor.fetchall
+    
     # Fazemos a requisição para a API
     response = client.get("/imoveis")
 
