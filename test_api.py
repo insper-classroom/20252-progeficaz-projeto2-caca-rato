@@ -57,10 +57,17 @@ def test_get_id(mock_connect_db, client):
     id=1
     response = client.get(f"imoveis/{id}")
     assert response.status_code == 200
-    expected_response = {[
-        {'id':1, 'logradouro':'Nicole Common', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'casa em condominio', 'valor':488423.52, 'data_aquisicao':'2017-07-29'},
-        ]
-    }
+    expected_response = {
+    'id': 1,
+    'logradouro': 'Nicole Common',
+    'tipo_logradouro': 'Travessa',
+    'bairro': 'Lake Danielle',
+    'cidade': 'Judymouth',
+    'cep': '85184',
+    'tipo': 'casa em condominio',
+    'valor': 488423.52,
+    'data_aquisicao': '2017-07-29'
+}
     assert response.get_json() == expected_response
 
 @patch("api.connect_db")
