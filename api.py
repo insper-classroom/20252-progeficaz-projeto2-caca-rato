@@ -100,11 +100,10 @@ def novo_imovel():
     cursor = conn.cursor()
     imovel = request.get_json()
     sql = """
-        INSERT INTO imoveis (id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        INSERT INTO imoveis (logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
     """
     cursor.execute(sql, (
-        imovel["id"],
         imovel["logradouro"],
         imovel["tipo_logradouro"],
         imovel["bairro"],
@@ -117,7 +116,12 @@ def novo_imovel():
 
     conn.commit()
 
-    cursor.execute("SELECT id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao FROM imoveis WHERE id = %s", (imovel["id"]))
+    new_id = cursor.lastrowid
+
+    cursor.execute(
+        "SELECT id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao FROM imoveis WHERE id = %s",
+        (new_id,)   
+    )
     result = cursor.fetchone()
 
     imovel = {
