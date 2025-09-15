@@ -83,13 +83,13 @@ def test_novo_imovel(mock_connect_db, client):
         'tipo_logradouro':'teste_log',
         'bairro':'pirituba',
         'cidade':'sao paulo',
-        'cep':00000,
+        'cep':'00000',
         'tipo':'casa',
         'valor':10000,
         'data_aquisicao':'2025-09-12',   
     }
     mock_cursor.fetchone.return_value = tuple(imovel.values())
-    response = client.post("/criar")
+    response = client.post("/criar", json=imovel)
     assert response.status_code == 201
     expected_response = {
         "imoveis": [imovel]

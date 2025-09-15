@@ -79,7 +79,7 @@ def get_imoveis():
 def get_id(id):
     conn = connect_db()
     cursor = conn.cursor()
-    sql = f"SELECT id, logradouro,tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao FROM imoveis WHERE id = {id}"
+    sql = f"SELECT * FROM imoveis WHERE id = {id}"
     cursor.execute(sql)
     result = cursor.fetchall()[0]
     imovel = {
@@ -94,8 +94,46 @@ def get_id(id):
                 "data_aquisicao": str(result[8])
             }
     return imovel, 200
+@app.route('/criar', methods=['POST'])
+def novo_imovel():
+    conn = connect_db()
+    cursor = conn.cursor()
+    imovel = request.get_json()
+    sql = """
+        INSERT INTO imoveis (id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+    """
+    cursor.execute(sql, (
+        imovel["id"],
+        imovel["logradouro"],
+        imovel["tipo_logradouro"],
+        imovel["bairro"],
+        imovel["cidade"],
+        imovel["cep"],
+        imovel["tipo"],
+        imovel["valor"],
+        imovel["data_aquisicao"]
+    ))
 
+    conn.commit()
 
+    cursor.execute("SELECT id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao FROM imoveis WHERE id = %s", (imovel["id"]))
+    result = cursor.fetchone()
 
+    imovel = {
+        "id": result[0],
+        "logradouro": result[1],
+        "tipo_logradouro": result[2],
+        "bairro": result[3],
+        "cidade": result[4],
+        "cep": str(result[5]),
+        "tipo": result[6],
+        "valor": float(result[7]),
+        "data_aquisicao": str(result[8])
+    }
+
+    return {"imoveis": [imovel]}, 201
+    
+    
 if __name__ == '__main__':
     app.run(debug=True)
