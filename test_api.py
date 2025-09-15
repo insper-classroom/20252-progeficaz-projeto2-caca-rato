@@ -153,6 +153,55 @@ def test_remove_imovel(mock_connect_db, client):
     assert response.get_json() == expected_response
     
     
+@patch("api.connect_db")
+def test_list_tipo(mock_connect_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+    mock_connect_db.return_value = mock_conn
+    
+    mock_cursor.fetchall.return_value = [
+        (1,'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', '85184', 'casa em condominio', 488423.52, '2017-07-29'),
+        (2,'Price Prairie', 'Travessa', 'Colonton', 'North Garyville', '93354', 'casa em condominio', 260069.89, '2021-11-30'),
+        (3,'Taylor Ranch', 'Avenida', 'West Jennashire', 'Katherinefurt', '51116', 'apartamento', 815969.92, '2020-04-24')
+    ]
+    
+    tipo = 'casa em condominio'
+    
+    response = client.get(f"/imoveis/tipo/{tipo}")
+    assert response.status_code == 200
+    expected_response = {
+        "imoveis": [
+            {'id':1, 'logradouro':'Nicole Common', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'casa em condominio', 'valor':488423.52, 'data_aquisicao':'2017-07-29'},
+            {'id':2, 'logradouro':'Price Prairie', 'tipo_logradouro':'Travessa', 'bairro':'Colonton', 'cidade':'North Garyville', 'cep':'93354', 'tipo':'casa em condominio', 'valor':260069.89, 'data_aquisicao':'2021-11-30'}
+        ]
+    }
+    assert response.get_json() == expected_response
+    
+@patch("api.connect_db")
+def test_list_cidade(mock_connect_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+    mock_connect_db.return_value = mock_conn
+    
+    mock_cursor.fetchall.return_value = [
+        (1,'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', '85184', 'casa em condominio', 488423.52, '2017-07-29'),
+        (2,'Price Prairie', 'Travessa', 'Colonton', 'North Garyville', '93354', 'casa em condominio', 260069.89, '2021-11-30'),
+        (3,'Taylor Ranch', 'Avenida', 'West Jennashire', 'Katherinefurt', '51116', 'apartamento', 815969.92, '2020-04-24')
+    ]
+    
+    cidade = 'Judymouth'
+    
+    response = client.get(f"/imoveis/cidade/{cidade}")
+    assert response.status_code == 200
+    expected_response = {
+        "imoveis": [
+            {'id':1, 'logradouro':'Nicole Common', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'casa em condominio', 'valor':488423.52, 'data_aquisicao':'2017-07-29'},
+            
+        ]
+    }
+    assert response.get_json() == expected_response
     
 
     
