@@ -95,3 +95,41 @@ def test_novo_imovel(mock_connect_db, client):
         "imoveis": [imovel]
     }
     assert response.get_json() == expected_response
+
+@patch("api.connect_db")
+def test_att_imovel(mock_connect_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+    mock_connect_db.return_value = mock_conn
+    
+    imovel_antigo = (1, 'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', 85184, 'casa em condominio', 488423.52, '2017-07-29')
+    imovel_att = (1, 'Nicole nova', 'T', 'lago novo', 'cidade nova', 11111, 'casa', 481223.52, '2025-09-15')
+    
+    mock_cursor.fetchone.side_effect = [imovel_antigo, imovel_att]
+    
+    atualizado = {
+        "logradouro": "Nicole nova",
+        "tipo_logradouro": "T",
+        "bairro": "lago novo",
+        "cidade": "cidade nova",
+        "cep": "11111",
+        "tipo": "casa",
+        "valor": 481223.52,
+        "data_aquisicao": "2025-09-15"
+    }
+    response = client.put("/imoveis/1", json=atualizado)
+    
+    assert response.status_code == 200
+    expected_response = {"imoveis": [{
+            'id': 1,
+            'logradouro': 'Nicole nova',
+            'tipo_logradouro': 'T',
+            'bairro': 'lago novo',
+            'cidade': 'cidade nova',
+            'cep': '11111',
+            'tipo': 'casa',
+            'valor': 481223.52,
+            'data_aquisicao': '2025-09-15'
+        }]}
+    assert response.get_json() == expected_response
