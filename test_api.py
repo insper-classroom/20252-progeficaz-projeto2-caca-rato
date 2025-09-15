@@ -133,3 +133,26 @@ def test_att_imovel(mock_connect_db, client):
             'data_aquisicao': '2025-09-15'
         }]}
     assert response.get_json() == expected_response
+    
+@patch("api.connect_db")
+def test_remove_imovel(mock_connect_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+    mock_connect_db.return_value = mock_conn
+    
+    mock_cursor.fetchall.return_value = [
+        (1, 'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', 85184, 'casa em condominio', 488423.52, '2017-07-29'),
+        (2,'Price Prairie', 'Travessa','Lake Danielle', 'Judymouth', 85184, 'apartamento', 488423.52, '2017-07-30')
+    ]
+    
+    id=2
+    response = client.delete(f"/imoveis/{id}")
+    assert response.status_code == 200
+    expected_response = {"message": f"Imóvel {id} removido com sucesso"}
+    assert response.get_json() == expected_response
+    
+    
+    
+
+    
