@@ -161,10 +161,10 @@ def test_list_tipo(mock_connect_db, client):
     mock_connect_db.return_value = mock_conn
     
     mock_cursor.fetchall.return_value = [
-        (1,'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', '85184', 'casa em condominio', 488423.52, '2017-07-29'),
-        (2,'Price Prairie', 'Travessa', 'Colonton', 'North Garyville', '93354', 'casa em condominio', 260069.89, '2021-11-30'),
-        (3,'Taylor Ranch', 'Avenida', 'West Jennashire', 'Katherinefurt', '51116', 'apartamento', 815969.92, '2020-04-24')
-    ]
+    (1,'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', '85184', 'casa em condominio', 488423.52, '2017-07-29'),
+    (2,'Price Prairie', 'Travessa', 'Colonton', 'North Garyville', '93354', 'casa em condominio', 260069.89, '2021-11-30')
+]
+
     
     tipo = 'casa em condominio'
     
@@ -187,8 +187,7 @@ def test_list_cidade(mock_connect_db, client):
     
     mock_cursor.fetchall.return_value = [
         (1,'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', '85184', 'casa em condominio', 488423.52, '2017-07-29'),
-        (2,'Price Prairie', 'Travessa', 'Colonton', 'North Garyville', '93354', 'casa em condominio', 260069.89, '2021-11-30'),
-        (3,'Taylor Ranch', 'Avenida', 'West Jennashire', 'Katherinefurt', '51116', 'apartamento', 815969.92, '2020-04-24')
+        (2,'Price Prairie', 'Travessa', 'Colonton', 'Judymouth', '93354', 'casa em condominio', 260069.89, '2021-11-30'),
     ]
     
     cidade = 'Judymouth'
@@ -198,6 +197,7 @@ def test_list_cidade(mock_connect_db, client):
     expected_response = {
         "imoveis": [
             {'id':1, 'logradouro':'Nicole Common', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'casa em condominio', 'valor':488423.52, 'data_aquisicao':'2017-07-29'},
+            {'id':2, 'logradouro':'Price Prairie', 'tipo_logradouro':'Travessa', 'bairro':'Colonton', 'cidade':'Judymouth', 'cep':'93354', 'tipo':'casa em condominio', 'valor':260069.89, 'data_aquisicao':'2021-11-30'},
             
         ]
     }

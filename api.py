@@ -54,7 +54,7 @@ def get_imoveis():
 
     results = cursor.fetchall()
     if not results:
-        resp = {"erro": "Nenhum aluno encontrado"}
+        resp = {"erro": "Nenhum imóvel encontrado"}
         return resp, 404
     else:
         imoveis = []
@@ -190,7 +190,79 @@ def att_imovel(id):
     }
 
     return {"imoveis": [imovel]}, 200
+@app.route('/imoveis/<int:id>', methods=['DELETE'])
+def remover_imovel(id):
+    conn = connect_db()
+    cursor = conn.cursor()
 
+    cursor.execute("SELECT id FROM imoveis WHERE id = %s", (id,))
+    result = cursor.fetchone()
+
+    if not result:
+        return {"message": f"Imóvel {id} não encontrado"}, 404
+
+    cursor.execute("DELETE FROM imoveis WHERE id = %s", (id,))
+    conn.commit()
+
+    return {"message": f"Imóvel {id} removido com sucesso"}, 200
+@app.route('/imoveis/cidade/<string:cidade>', methods=['GET'])
+def list_cidade(cidade):
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM imoveis WHERE cidade = %s", (cidade,))
+
+    results = cursor.fetchall()
+    if not results:
+        resp = {"erro": "Nenhum imóvel encontrado"}
+        return resp, 404
+    else:
+        imoveis = []
+        for imovel in results:
+            
+            imoveis.append({
+                "id": imovel[0],
+                "logradouro": imovel[1],
+                "tipo_logradouro": imovel[2],
+                "bairro": imovel[3],
+                "cidade": imovel[4],
+                "cep": str(imovel[5]),  
+                "tipo": imovel[6],
+                "valor": float(imovel[7]),
+                "data_aquisicao": str(imovel[8])
+            })
+
+        resp = {"imoveis": imoveis}
+    return resp, 200
+@app.route('/imoveis/tipo/<string:tipo>', methods=['GET'])
+def list_tipo(tipo):
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM imoveis WHERE tipo = %s", (tipo,))
+
+    results = cursor.fetchall()
+    if not results:
+        resp = {"erro": "Nenhum imóvel encontrado"}
+        return resp, 404
+    else:
+        imoveis = []
+        for imovel in results:
+            
+            imoveis.append({
+                "id": imovel[0],
+                "logradouro": imovel[1],
+                "tipo_logradouro": imovel[2],
+                "bairro": imovel[3],
+                "cidade": imovel[4],
+                "cep": str(imovel[5]),  
+                "tipo": imovel[6],
+                "valor": float(imovel[7]),
+                "data_aquisicao": str(imovel[8])
+            })
+
+        resp = {"imoveis": imoveis}
+    return resp, 200
     
 if __name__ == '__main__':
     app.run(debug=True)
