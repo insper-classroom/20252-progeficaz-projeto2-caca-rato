@@ -79,7 +79,7 @@ def get_imoveis():
 def get_id(id):
     conn = connect_db()
     cursor = conn.cursor()
-    sql = f"SELECT * FROM imoveis WHERE id = {id}"
+    sql = f"""SELECT * FROM imoveis WHERE id = {id}"""
     cursor.execute(sql)
     result = cursor.fetchall()[0]
     imovel = {
@@ -137,7 +137,60 @@ def novo_imovel():
     }
 
     return {"imoveis": [imovel]}, 201
-    
+@app.route('/imoveis/<int:id>', methods=['PUT'])
+def att_imovel(id):
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    imovel = request.get_json()
+
+    cursor.execute(
+        "SELECT id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao FROM imoveis WHERE id = %s",
+        (id,)
+    )
+    antigo = cursor.fetchone()
+    if not antigo:
+        return {"erro": "Imóvel não encontrado"}, 404
+
+    sql = """
+        UPDATE imoveis
+        SET logradouro=%s, tipo_logradouro=%s, bairro=%s, cidade=%s,
+            cep=%s, tipo=%s, valor=%s, data_aquisicao=%s
+        WHERE id=%s
+    """
+    cursor.execute(sql, (
+        imovel["logradouro"],
+        imovel["tipo_logradouro"],
+        imovel["bairro"],
+        imovel["cidade"],
+        imovel["cep"],
+        imovel["tipo"],
+        imovel["valor"],
+        imovel["data_aquisicao"],
+        id
+    ))
+    conn.commit()
+
+    cursor.execute(
+        "SELECT id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao FROM imoveis WHERE id = %s",
+        (id,)
+    )
+    result = cursor.fetchone()
+
+    imovel = {
+        "id": result[0],
+        "logradouro": result[1],
+        "tipo_logradouro": result[2],
+        "bairro": result[3],
+        "cidade": result[4],
+        "cep": str(result[5]),  
+        "tipo": result[6],
+        "valor": float(result[7]),
+        "data_aquisicao": str(result[8])
+    }
+
+    return {"imoveis": [imovel]}, 200
+
     
 if __name__ == '__main__':
     app.run(debug=True)
