@@ -23,7 +23,7 @@ def novo_imovel():
 @app.route('/imoveis/<int:id>', methods=['PUT'])
 def att_imovel(id):
     imovel = request.get_json()
-    resp = views.att_imovel(imovel)
+    resp = views.att_imovel(id,imovel)
     return resp[0], resp[1]
 
 @app.route('/imoveis/<int:id>', methods=['DELETE'])
@@ -38,7 +38,7 @@ def list_tipo(tipo):
 
 @app.route('/imoveis/cidade/<string:cidade>', methods=['GET'])
 def list_cidade(cidade):
-    resp = views.list_tipo(cidade)
+    resp = views.list_cidade(cidade)
     return resp[0], resp[1]
 
 

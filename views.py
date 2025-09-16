@@ -54,8 +54,7 @@ def get_imoveis():
 def get_id(id):
     conn = connect_db()
     cursor = conn.cursor()
-    sql = f"""SELECT * FROM imoveis WHERE id = {id}"""
-    cursor.execute(sql)
+    cursor.execute("SELECT * FROM imoveis WHERE id = %s", (id,))
     result = cursor.fetchall()[0]
     if not result:  
         return {"message": f"Imóvel com id {id} não encontrado"}, 404
@@ -81,7 +80,6 @@ def novo_imovel(imovel):
         imovel["data_aquisicao"]
     ))
     conn.commit()
-    # Confere se ele foi criado
     new_id = cursor.lastrowid
     cursor.execute(
         "SELECT id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao FROM imoveis WHERE id = %s",
@@ -93,11 +91,11 @@ def novo_imovel(imovel):
     resp = utils.formata_imovel(result)
     return resp, 201
 
-def att_imovel(imovel):
+def att_imovel(id, imovel):
     conn = connect_db()
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao FROM imoveis WHERE id = %s",
+        "SELECT id FROM imoveis WHERE id = %s",
         (id,)
     )
     antigo = cursor.fetchone()
