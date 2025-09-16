@@ -2,9 +2,9 @@
 
 ## 📌 Sobre o projeto
 Este projeto é uma API para gerenciamento de imóveis, desenvolvida em Python.  
-O sistema permite realizar operações CRUD (Criar, Listar, Atualizar e Remover), além de filtros específicos, como por **tipo de imóvel** e **cidade**.  
+O sistema permite realizar operações CRUD (Criar, Listar, Atualizar e Remover), além de filtros específicos, como por tipo de imóvel e cidade.  
 
-Foram implementados **testes automatizados com Pytest** para garantir a confiabilidade das rotas. 
+Foram implementados testes automatizados com Pytest para garantir a confiabilidade das rotas. 
 
 ---
 
@@ -59,3 +59,9 @@ projeto-imoveis
 │── requirements.txt # Dependências do projeto
 │── README.md # Este arquivo
 ```
+
+---
+
+## 🌐 Deploy / Acesso
+
+👉 [Acesse a API aqui](https://SEU-LINK-DA-API-AWS.com)
