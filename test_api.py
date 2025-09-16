@@ -89,7 +89,7 @@ def test_novo_imovel(mock_connect_db, client):
         'data_aquisicao':'2025-09-12',   
     }
     mock_cursor.fetchone.return_value = tuple(imovel.values())
-    response = client.post("/criar", json=imovel)
+    response = client.post("/imoveis", json=imovel)
     assert response.status_code == 201
     expected_response = {
         "imoveis": [imovel]

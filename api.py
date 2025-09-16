@@ -94,7 +94,7 @@ def get_id(id):
                 "data_aquisicao": str(result[8])
             }
     return imovel, 200
-@app.route('/criar', methods=['POST'])
+@app.route('/imoveis', methods=['POST'])
 def novo_imovel():
     conn = connect_db()
     cursor = conn.cursor()
