@@ -9,7 +9,7 @@ def client():
     with app.test_client() as client:
         yield client
 
-@patch("api.connect_db")  # Substituímos a função que conecta ao banco por um Mock
+@patch("views.connect_db")  # Substituímos a função que conecta ao banco por um Mock
 def test_get_imoveis(mock_connect_db, client):
     """Testa a rota /alunos sem acessar o banco de dados real."""
 
@@ -36,15 +36,13 @@ def test_get_imoveis(mock_connect_db, client):
     assert response.status_code == 200
 
     # Verificamos se os dados retornados estão corretos
-    expected_response = {
-        "imoveis": [
+    expected_response = [
             {'id':1, 'logradouro':'Nicole Common', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'casa em condominio', 'valor':488423.52, 'data_aquisicao':'2017-07-29'},
             {'id':2, 'logradouro':'Price Prairie', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'apartamento', 'valor':488423.52, 'data_aquisicao':'2017-07-30'}
         ]
-    }
     assert response.get_json() == expected_response
 
-@patch("api.connect_db")
+@patch("views.connect_db")
 def test_get_id(mock_connect_db, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
@@ -70,7 +68,7 @@ def test_get_id(mock_connect_db, client):
 }
     assert response.get_json() == expected_response
 
-@patch("api.connect_db")
+@patch("views.connect_db")
 def test_novo_imovel(mock_connect_db, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
@@ -91,12 +89,10 @@ def test_novo_imovel(mock_connect_db, client):
     mock_cursor.fetchone.return_value = tuple(imovel.values())
     response = client.post("/imoveis", json=imovel)
     assert response.status_code == 201
-    expected_response = {
-        "imoveis": [imovel]
-    }
+    expected_response = imovel
     assert response.get_json() == expected_response
 
-@patch("api.connect_db")
+@patch("views.connect_db")
 def test_att_imovel(mock_connect_db, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
@@ -121,7 +117,7 @@ def test_att_imovel(mock_connect_db, client):
     response = client.put("/imoveis/1", json=atualizado)
     
     assert response.status_code == 200
-    expected_response = {"imoveis": [{
+    expected_response = {
             'id': 1,
             'logradouro': 'Nicole nova',
             'tipo_logradouro': 'T',
@@ -131,10 +127,10 @@ def test_att_imovel(mock_connect_db, client):
             'tipo': 'casa',
             'valor': 481223.52,
             'data_aquisicao': '2025-09-15'
-        }]}
+        }
     assert response.get_json() == expected_response
     
-@patch("api.connect_db")
+@patch("views.connect_db")
 def test_remove_imovel(mock_connect_db, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
@@ -153,7 +149,7 @@ def test_remove_imovel(mock_connect_db, client):
     assert response.get_json() == expected_response
     
     
-@patch("api.connect_db")
+@patch("views.connect_db")
 def test_list_tipo(mock_connect_db, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
@@ -170,15 +166,13 @@ def test_list_tipo(mock_connect_db, client):
     
     response = client.get(f"/imoveis/tipo/{tipo}")
     assert response.status_code == 200
-    expected_response = {
-        "imoveis": [
+    expected_response = [
             {'id':1, 'logradouro':'Nicole Common', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'casa em condominio', 'valor':488423.52, 'data_aquisicao':'2017-07-29'},
             {'id':2, 'logradouro':'Price Prairie', 'tipo_logradouro':'Travessa', 'bairro':'Colonton', 'cidade':'North Garyville', 'cep':'93354', 'tipo':'casa em condominio', 'valor':260069.89, 'data_aquisicao':'2021-11-30'}
         ]
-    }
     assert response.get_json() == expected_response
     
-@patch("api.connect_db")
+@patch("views.connect_db")
 def test_list_cidade(mock_connect_db, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
@@ -194,13 +188,11 @@ def test_list_cidade(mock_connect_db, client):
     
     response = client.get(f"/imoveis/cidade/{cidade}")
     assert response.status_code == 200
-    expected_response = {
-        "imoveis": [
+    expected_response = [
             {'id':1, 'logradouro':'Nicole Common', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'casa em condominio', 'valor':488423.52, 'data_aquisicao':'2017-07-29'},
             {'id':2, 'logradouro':'Price Prairie', 'tipo_logradouro':'Travessa', 'bairro':'Colonton', 'cidade':'Judymouth', 'cep':'93354', 'tipo':'casa em condominio', 'valor':260069.89, 'data_aquisicao':'2021-11-30'},
-            
         ]
-    }
+    
     assert response.get_json() == expected_response
     
 
