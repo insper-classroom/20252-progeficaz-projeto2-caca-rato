@@ -54,9 +54,10 @@ def get_imoveis():
 def get_id(id):
     conn = connect_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM imoveis WHERE id = %s", (id,))
-    result = cursor.fetchall()[0]
-    if not result:  
+    cursor.execute(F"SELECT * FROM imoveis WHERE id = {id}")
+    try:
+        result = cursor.fetchall()[0]
+    except:  
         return {"message": f"Imóvel com id {id} não encontrado"}, 404
     resp = utils.formata_imovel(result)
     return resp, 200
