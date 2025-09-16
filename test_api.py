@@ -8,37 +8,34 @@ def client():
     app.config["TESTING"] = True
     with app.test_client() as client:
         yield client
-
-@patch("views.connect_db")  # Substituímos a função que conecta ao banco por um Mock
+def add_links(id):
+    """Adiciona bloco links a um dicionário de imóvel."""
+    base_url = "http://127.0.0.1:5000/imoveis"
+    return {
+        "self": {"href": f"{base_url}/{id}", "method": "GET"},
+        "update": {"href": f"{base_url}/{id}", "method": "PUT"},
+        "delete": {"href": f"{base_url}/{id}", "method": "DELETE"},
+    }
+    return imovel
+@patch("views.connect_db")
 def test_get_imoveis(mock_connect_db, client):
-    """Testa a rota /alunos sem acessar o banco de dados real."""
-
-    # Criamos um Mock para a conexão e o cursor
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
-
-    # Configuramos o Mock para retornar o cursor quando chamarmos conn.cursor()
     mock_conn.cursor.return_value = mock_cursor
-
-    # Simulamos o retorno do banco de dados
     mock_cursor.fetchall.return_value = [
-        (1, 'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', 85184, 'casa em condominio', 488423.52, '2017-07-29'),
-        (2,'Price Prairie', 'Travessa','Lake Danielle', 'Judymouth', 85184, 'apartamento', 488423.52, '2017-07-30')
+        (1, 'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', 85184, 'casa em condominio', 488423.52, '2017-07-29', add_links(1)),
+        (2,'Price Prairie', 'Travessa','Lake Danielle', 'Judymouth', 85184, 'apartamento', 488423.52, '2017-07-30', add_links(2))
     ]
     
-    # Substituímos a função `connect_db` para retornar nosso Mock em vez de uma conexão real
     mock_connect_db.return_value = mock_conn
     
-    # Fazemos a requisição para a API
     response = client.get("/imoveis")
 
-    # Verificamos se o código de status da resposta é 200 (OK)
     assert response.status_code == 200
 
-    # Verificamos se os dados retornados estão corretos
     expected_response = [
-            {'id':1, 'logradouro':'Nicole Common', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'casa em condominio', 'valor':488423.52, 'data_aquisicao':'2017-07-29'},
-            {'id':2, 'logradouro':'Price Prairie', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'apartamento', 'valor':488423.52, 'data_aquisicao':'2017-07-30'}
+            {'id':1, 'logradouro':'Nicole Common', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'casa em condominio', 'valor':488423.52, 'data_aquisicao':'2017-07-29', 'links': add_links(1)},
+            {'id':2, 'logradouro':'Price Prairie', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'apartamento', 'valor':488423.52, 'data_aquisicao':'2017-07-30', 'links': add_links(2)}
         ]
     assert response.get_json() == expected_response
 
@@ -48,8 +45,8 @@ def test_get_id(mock_connect_db, client):
     mock_cursor = MagicMock()
     mock_conn.cursor.return_value = mock_cursor
     mock_cursor.fetchall.return_value = [
-        (1, 'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', 85184, 'casa em condominio', 488423.52, '2017-07-29'),
-        (2,'Price Prairie', 'Travessa','Lake Danielle', 'Judymouth', 85184, 'apartamento', 488423.52, '2017-07-30')
+        (1, 'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', 85184, 'casa em condominio', 488423.52, '2017-07-29', add_links(1)),
+        (2,'Price Prairie', 'Travessa','Lake Danielle', 'Judymouth', 85184, 'apartamento', 488423.52, '2017-07-30', add_links(2))
     ]
     mock_connect_db.return_value = mock_conn
     id=1
@@ -64,7 +61,8 @@ def test_get_id(mock_connect_db, client):
     'cep': '85184',
     'tipo': 'casa em condominio',
     'valor': 488423.52,
-    'data_aquisicao': '2017-07-29'
+    'data_aquisicao': '2017-07-29',
+    'links': add_links(1)
 }
     assert response.get_json() == expected_response
 
@@ -84,7 +82,8 @@ def test_novo_imovel(mock_connect_db, client):
         'cep':'00000',
         'tipo':'casa',
         'valor':10000,
-        'data_aquisicao':'2025-09-12',   
+        'data_aquisicao':'2025-09-12', 
+        'links': add_links(2) 
     }
     mock_cursor.fetchone.return_value = tuple(imovel.values())
     response = client.post("/imoveis", json=imovel)
@@ -99,8 +98,8 @@ def test_att_imovel(mock_connect_db, client):
     mock_conn.cursor.return_value = mock_cursor
     mock_connect_db.return_value = mock_conn
     
-    imovel_antigo = (1, 'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', 85184, 'casa em condominio', 488423.52, '2017-07-29')
-    imovel_att = (1, 'Nicole nova', 'T', 'lago novo', 'cidade nova', 11111, 'casa', 481223.52, '2025-09-15')
+    imovel_antigo = (1, 'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', 85184, 'casa em condominio', 488423.52, '2017-07-29', add_links(1))
+    imovel_att = (1, 'Nicole nova', 'T', 'lago novo', 'cidade nova', 11111, 'casa', 481223.52, '2025-09-15', add_links(1))
     
     mock_cursor.fetchone.side_effect = [imovel_antigo, imovel_att]
     
@@ -112,7 +111,8 @@ def test_att_imovel(mock_connect_db, client):
         "cep": "11111",
         "tipo": "casa",
         "valor": 481223.52,
-        "data_aquisicao": "2025-09-15"
+        "data_aquisicao": "2025-09-15",
+        "links": add_links(1)
     }
     response = client.put("/imoveis/1", json=atualizado)
     
@@ -126,7 +126,8 @@ def test_att_imovel(mock_connect_db, client):
             'cep': '11111',
             'tipo': 'casa',
             'valor': 481223.52,
-            'data_aquisicao': '2025-09-15'
+            'data_aquisicao': '2025-09-15', 
+            'links': add_links(1)
         }
     assert response.get_json() == expected_response
     
@@ -138,8 +139,8 @@ def test_remove_imovel(mock_connect_db, client):
     mock_connect_db.return_value = mock_conn
     
     mock_cursor.fetchall.return_value = [
-        (1, 'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', 85184, 'casa em condominio', 488423.52, '2017-07-29'),
-        (2,'Price Prairie', 'Travessa','Lake Danielle', 'Judymouth', 85184, 'apartamento', 488423.52, '2017-07-30')
+        (1, 'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', 85184, 'casa em condominio', 488423.52, '2017-07-29', add_links(1)),
+        (2,'Price Prairie', 'Travessa','Lake Danielle', 'Judymouth', 85184, 'apartamento', 488423.52, '2017-07-30', add_links(2))
     ]
     
     id=2
@@ -157,8 +158,8 @@ def test_list_tipo(mock_connect_db, client):
     mock_connect_db.return_value = mock_conn
     
     mock_cursor.fetchall.return_value = [
-    (1,'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', '85184', 'casa em condominio', 488423.52, '2017-07-29'),
-    (2,'Price Prairie', 'Travessa', 'Colonton', 'North Garyville', '93354', 'casa em condominio', 260069.89, '2021-11-30')
+    (1,'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', '85184', 'casa em condominio', 488423.52, '2017-07-29', add_links(1)),
+    (2,'Price Prairie', 'Travessa', 'Colonton', 'North Garyville', '93354', 'casa em condominio', 260069.89, '2021-11-30', add_links(2))
 ]
 
     
@@ -167,8 +168,8 @@ def test_list_tipo(mock_connect_db, client):
     response = client.get(f"/imoveis/tipo/{tipo}")
     assert response.status_code == 200
     expected_response = [
-            {'id':1, 'logradouro':'Nicole Common', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'casa em condominio', 'valor':488423.52, 'data_aquisicao':'2017-07-29'},
-            {'id':2, 'logradouro':'Price Prairie', 'tipo_logradouro':'Travessa', 'bairro':'Colonton', 'cidade':'North Garyville', 'cep':'93354', 'tipo':'casa em condominio', 'valor':260069.89, 'data_aquisicao':'2021-11-30'}
+            {'id':1, 'logradouro':'Nicole Common', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'casa em condominio', 'valor':488423.52, 'data_aquisicao':'2017-07-29', 'links': add_links(1)},
+            {'id':2, 'logradouro':'Price Prairie', 'tipo_logradouro':'Travessa', 'bairro':'Colonton', 'cidade':'North Garyville', 'cep':'93354', 'tipo':'casa em condominio', 'valor':260069.89, 'data_aquisicao':'2021-11-30', 'links': add_links(2)}
         ]
     assert response.get_json() == expected_response
     
@@ -180,8 +181,8 @@ def test_list_cidade(mock_connect_db, client):
     mock_connect_db.return_value = mock_conn
     
     mock_cursor.fetchall.return_value = [
-        (1,'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', '85184', 'casa em condominio', 488423.52, '2017-07-29'),
-        (2,'Price Prairie', 'Travessa', 'Colonton', 'Judymouth', '93354', 'casa em condominio', 260069.89, '2021-11-30'),
+        (1,'Nicole Common', 'Travessa', 'Lake Danielle', 'Judymouth', '85184', 'casa em condominio', 488423.52, '2017-07-29', add_links(1)),
+        (2,'Price Prairie', 'Travessa', 'Colonton', 'Judymouth', '93354', 'casa em condominio', 260069.89, '2021-11-30', add_links(2)),
     ]
     
     cidade = 'Judymouth'
@@ -189,11 +190,10 @@ def test_list_cidade(mock_connect_db, client):
     response = client.get(f"/imoveis/cidade/{cidade}")
     assert response.status_code == 200
     expected_response = [
-            {'id':1, 'logradouro':'Nicole Common', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'casa em condominio', 'valor':488423.52, 'data_aquisicao':'2017-07-29'},
-            {'id':2, 'logradouro':'Price Prairie', 'tipo_logradouro':'Travessa', 'bairro':'Colonton', 'cidade':'Judymouth', 'cep':'93354', 'tipo':'casa em condominio', 'valor':260069.89, 'data_aquisicao':'2021-11-30'},
+            {'id':1, 'logradouro':'Nicole Common', 'tipo_logradouro':'Travessa', 'bairro':'Lake Danielle', 'cidade':'Judymouth', 'cep':'85184', 'tipo':'casa em condominio', 'valor':488423.52, 'data_aquisicao':'2017-07-29', 'links': add_links(1)},
+            {'id':2, 'logradouro':'Price Prairie', 'tipo_logradouro':'Travessa', 'bairro':'Colonton', 'cidade':'Judymouth', 'cep':'93354', 'tipo':'casa em condominio', 'valor':260069.89, 'data_aquisicao':'2021-11-30', 'links': add_links(2)},
         ]
     
     assert response.get_json() == expected_response
-    
 
     
