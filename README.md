@@ -1,9 +1,10 @@
-# 🏠 API de Imóveis
+# 🏠 Projeto 2 - Caça-Rato
 
 ## 📌 Sobre o projeto
-Este projeto implementa uma **API RESTful de Imóveis** desenvolvida em **Python**, utilizando **TDD (Test-Driven Development)** para garantir qualidade e confiabilidade.  
+Este projeto é uma API para gerenciamento de imóveis, desenvolvida em Python.  
+O sistema permite realizar operações CRUD (Criar, Listar, Atualizar e Remover), além de filtros específicos, como por **tipo de imóvel** e **cidade**.  
 
-A API permite criar, listar, atualizar, remover e filtrar imóveis.
+Foram implementados **testes automatizados com Pytest** para garantir a confiabilidade das rotas. 
 
 ---
 
@@ -11,16 +12,15 @@ A API permite criar, listar, atualizar, remover e filtrar imóveis.
 - Vinícius Oehlmann de Lima
 - Erick Barbosa
 
-
 ---
 
 ## 🚀 Tecnologias utilizadas
 - **Python 3.x**
-- **Flask** (ou FastAPI, caso esteja usando)
-- **Pytest** (testes automatizados)
-- **SQLite/MySQL** (banco de dados)
-- **Aiven** (para hospedagem do banco MySQL em nuvem, requisito da rubrica)
-- **AWS** (para deploy da aplicação)
+- **Flask**
+- **Pytest**
+- **SQLite/MySQL**
+- **Aiven**
+- **AWS**
 
 ---
 
@@ -44,6 +44,7 @@ Todos os endpoints retornam **códigos HTTP corretos**:
 
 ## 📂 Estrutura do projeto
 
+```plaintext
 projeto-imoveis
 │── api.py # Código principal da API
 │ ├── rotas
@@ -57,3 +58,4 @@ projeto-imoveis
 │
 │── requirements.txt # Dependências do projeto
 │── README.md # Este arquivo
+```
