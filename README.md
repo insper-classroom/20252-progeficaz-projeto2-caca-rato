@@ -7,6 +7,13 @@ A API permite criar, listar, atualizar, remover e filtrar imóveis.
 
 ---
 
+## 👥 Participantes
+- Vinícius Oehlmann de Lima
+- Erick Barbosa
+
+
+---
+
 ## 🚀 Tecnologias utilizadas
 - **Python 3.x**
 - **Flask** (ou FastAPI, caso esteja usando)
