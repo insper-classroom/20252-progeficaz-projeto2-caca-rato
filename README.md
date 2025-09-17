@@ -47,14 +47,17 @@ Todos os endpoints retornam **códigos HTTP corretos**:
 ```plaintext
 projeto-imoveis
 │── api.py # Código principal da API
-│ ├── rotas
-│ └── modelos
+│ ├── servidor
+│ └── rotas
 │
 │── test_api.py # Testes com pytest
 │ └── testes das rotas e funções implementadas 
 │
 │── views.py
-│└── 
+│└── funções
+│
+│── utils.py
+│└── modelo para formatar imóvel
 │
 │── requirements.txt # Dependências do projeto
 │── README.md # Este arquivo
