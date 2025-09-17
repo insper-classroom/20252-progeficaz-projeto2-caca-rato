@@ -64,4 +64,4 @@ projeto-imoveis
 
 ## 🌐 Deploy / Acesso
 
-👉 [Acesse a API aqui](https://SEU-LINK-DA-API-AWS.com)
+👉 [Acesse a API aqui](http://98.81.145.185/imoveis)
